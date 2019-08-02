@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 
+	appv1client "github.com/openshift/client-go/apps/clientset/versioned/typed/apps/v1"
 	buildv1client "github.com/openshift/client-go/build/clientset/versioned/typed/build/v1"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -42,6 +44,24 @@ func main() {
 	buildclient, err := buildv1client.NewForConfig(restconfig)
 	if err != nil {
 		panic(err)
+	}
+
+	// Create an OpenShift app/v1 client.
+	appclient, err := appv1client.NewForConfig(restconfig)
+	if err != nil {
+		panic(err)
+	}
+
+	// List all DeploymentConfigs.
+	dcs, err := appclient.DeploymentConfigs(namespace).List(metav1.ListOptions{})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("DeploymentConfigs in namespace %s:\n", namespace)
+	for _, dc := range dcs.Items {
+		spec, _ := json.Marshal(dc.Spec)
+		fmt.Printf("  %s\n", dc.Name+string(spec))
 	}
 
 	// List all Pods in our current Namespace.
