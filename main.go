@@ -55,6 +55,39 @@ func main() {
 		fmt.Printf("  %s\n", pod.Name)
 	}
 
+	// List all ConfigMaps
+	cms, err := coreclient.ConfigMaps(namespace).List(metav1.ListOptions{})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("ConfigMaps in namespace %s:\n", namespace)
+	for _, cm := range cms.Items {
+		fmt.Printf("  %s\n", cm.Name)
+	}
+
+	// List all Services
+	svcs, err := coreclient.Services(namespace).List(metav1.ListOptions{})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Services in namespace %s:\n", namespace)
+	for _, svc := range svcs.Items {
+		fmt.Printf("  %s\n", svc.Name)
+	}
+
+	// List all Endpoints
+	eps, err := coreclient.Endpoints(namespace).List(metav1.ListOptions{})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Endpoints in namespace %s:\n", namespace)
+	for _, ep := range eps.Items {
+		fmt.Printf("  %s\n", ep.Name)
+	}
+
 	// List all Builds in our current Namespace.
 	builds, err := buildclient.Builds(namespace).List(metav1.ListOptions{})
 	if err != nil {
